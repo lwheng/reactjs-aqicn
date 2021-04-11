@@ -1,35 +1,31 @@
-'use strict';
+function App () {
+  console.log("App")
+  const [content, setContent] = React.useState("Nothing to display");
 
-const e = React.createElement;
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { content: "Nothing to display" };
-  }
-
-  componentDidMount() {
+  React.useEffect(() => {
+    console.log("useEffect");
     fetch("https://api.waqi.info/feed/geo:1.367261;103.79982/?token=49441845ec0f10680db9bafd791d935630d6bb28")
       .then(res => res.json())
       .then(
         (result) => {
-          this.setState({
-            content: JSON.stringify(result)
-          });
+          console.log("success");
+          setContent(JSON.stringify(result));
         },
 
         (error) => {
-          this.setState({
-            content: "Error!"
-          });
+          console.log("error");
+          setContent(JSON.stringify("Error!"));
         }
-      )
-  }
+      );
 
-  render() {
-    return this.state.content;
-  }
+    return function cleanup() {
+      console.log("cleanup");
+    };
+  }, []);
+
+  return (
+    <div>{content}</div>
+  );
 }
 
-const domContainer = document.querySelector('#root');
-ReactDOM.render(e(App), domContainer);
+ReactDOM.render(<App/>, document.querySelector('#root'));
